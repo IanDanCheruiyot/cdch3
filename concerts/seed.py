@@ -1,19 +1,20 @@
-import os
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
 from models import Base, Band, Venue, Concert
-from datetime import date
 
-BASE_DIR = os.path.dirname(os.path.realpath(__file__))
+import os
+from sqlalchemy.orm import sessionmaker, relationship, backref
+import sys
+from sqlalchemy import create_engine, Column, Integer, String, ForeignKey, PrimaryKeyConstraint
+from sqlalchemy import func
+from sqlalchemy.ext.declarative import declarative_base
+sys.path.append(os.getcwd)
 
-connection_str = 'sqlite:///' + os.path.join(BASE_DIR, 'concert.db')
-
-engine = create_engine(connection_str)
-
-Base.metadata.bind = engine
-
+# Create an SQLite database engine and initialize the database schema
+engine = create_engine('sqlite:///concerts.db', echo=True)
+# Create a session factory bound to the engine
 Session = sessionmaker(bind=engine)
 session = Session()
+# Initialize the Base for the models
+Base = declarative_base()
 
 # creating instances of classes to test code
 
@@ -35,7 +36,7 @@ concert3 = Concert(name="Reggae Experience", date="2024-10-20", band=band3, venu
 # Adding all instances to the session
 session.add_all([band1, band2, band3, venue1, venue2, venue3, concert1, concert2, concert3])
 
-# Commiting the session
+# Committing the session
 session.commit()
 session.close()
 
